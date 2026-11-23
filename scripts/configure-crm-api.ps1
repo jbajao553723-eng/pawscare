@@ -1,8 +1,8 @@
 param(
     [string]$DirectoryServer = ".\SQLEXPRESS",
     [string]$ServerA = ".\SQLEXPRESS",
-    [string]$ServerB = "(localdb)\PawCareServer2",
-    [string]$ServerC = "(localdb)\PawCareServer3"
+    [string]$ServerB = ".\SQLEXPRESS",
+    [string]$ServerC = ".\SQLEXPRESS"
 )
 
 $ErrorActionPreference = "Stop"

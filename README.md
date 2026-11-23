@@ -4,15 +4,13 @@ PawCare is a native C# WPF veterinary clinic management system connected to Micr
 
 ## SQL Server topology
 
-The three configured development profiles use Windows authentication:
+The development environment uses one SQL Express instance with Windows authentication and a separate database for every tenant:
 
-| Profile | SQL instance | Database set |
-|---|---|---|
-| PawCare Server 1 | `.\SQLEXPRESS` | `MasterCRMJ`, `PawCareMaster`, `PawCareTenantA` |
-| PawCare Server 2 | `(localdb)\PawCareServer2` | `PawCareMaster`, `PawCareTenantB` |
-| PawCare Server 3 | `(localdb)\PawCareServer3` | `PawCareMaster`, `PawCareTenantC` |
+| SQL instance | Database set |
+|---|---|
+| `.\SQLEXPRESS` | `MasterCRMJ`, `PawCareMaster`, `PawCareTenantA`, `PawCareTenantB`, `PawCareTenantC` |
 
-Servers 2 and 3 are separate, user-scoped LocalDB engine instances on this computer. Their database files and sync mirrors are in separate directories under `%LOCALAPPDATA%\PawCare\data`. LocalDB is for local development; deploying to separate computers requires SQL Server instances on those hosts and access to their backup shares.
+`MasterCRMJ` resolves each username to a tenant, `PawCareMaster` stores shared identity and subscription governance, and the three tenant databases keep operational records physically isolated. This is database-per-tenant isolation on one manageable SQL Server instance.
 
 | Database | Purpose |
 |---|---|
@@ -105,7 +103,7 @@ dotnet run --project tests/PawCare.SmokeTests/PawCare.SmokeTests.csproj -c Relea
 dotnet run --project src/PawCare.Desktop/PawCare.Desktop.csproj -c Release
 ```
 
-The test project creates temporary master and tenant databases, verifies routing, isolation, concurrency, sync and backup, then removes only those test-prefixed databases. Set `PAWCARE_TEST_SQL_SERVER` and `PAWCARE_TEST_SECOND_SQL_SERVER` to two different instances to test physical instance isolation.
+The test project creates temporary master and tenant databases on the configured test instance, verifies routing, database-per-tenant isolation, concurrency, sync, and backup, then removes only those test-prefixed databases. Set `PAWCARE_TEST_SQL_SERVER` to use a different test instance.
 
 See [PROCESS_FLOW.md](docs/PROCESS_FLOW.md) for the role matrix and complete data flow.
 

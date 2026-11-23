@@ -1,6 +1,6 @@
 :setvar ServerA ".\SQLEXPRESS"
-:setvar ServerB "(localdb)\PawCareServer2"
-:setvar ServerC "(localdb)\PawCareServer3"
+:setvar ServerB ".\SQLEXPRESS"
+:setvar ServerC ".\SQLEXPRESS"
 
 USE [MasterCRMJ];
 GO

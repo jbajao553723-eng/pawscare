@@ -5,15 +5,16 @@ using PawCare.Desktop.Services;
 var testRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PawCare", "data", "test-runs", Guid.NewGuid().ToString("N"));
 var databasePrefix = $"PawCareTest{Guid.NewGuid():N}"[..19];
 var firstServer = Environment.GetEnvironmentVariable("PAWCARE_TEST_SQL_SERVER") ?? @".\SQLEXPRESS";
-var secondServer = Environment.GetEnvironmentVariable("PAWCARE_TEST_SECOND_SQL_SERVER") ?? firstServer;
 var paths = new DatabasePaths(testRoot, firstServer, databasePrefix);
-var secondPaths = new DatabasePaths(Path.Combine(testRoot, "second-server"), secondServer,
-    string.Equals(firstServer, secondServer, StringComparison.OrdinalIgnoreCase) ? databasePrefix + "Other" : databasePrefix);
+var secondPaths = new DatabasePaths(Path.Combine(testRoot, "alternate-deployment"), firstServer, databasePrefix + "Other");
+var cleanupNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+var alternateCleanupNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 try
 {
     var master = new MasterDatabase(paths);
     master.Initialize();
+    cleanupNames.UnionWith([paths.MasterDatabaseName, paths.TenantDatabaseName("tenant-a"), paths.TenantDatabaseName("tenant-b"), paths.TenantDatabaseName("tenant-c")]);
 
     var tenants = master.GetTenants();
     Assert(DatabaseExists(paths, paths.MasterDatabaseName), "master SQL Server database created");
@@ -41,7 +42,7 @@ try
         tenantStore.Load();
         Assert(DatabaseExists(paths, tenant.DatabasePath), $"isolated SQL Server database created for {tenant.Code}");
     }
-    Assert(AllDatabaseNames(paths).Count == 4, "four-database SQL Server topology created");
+    Assert(cleanupNames.All(name => DatabaseExists(paths, name)), "one master and three isolated tenant databases created");
 
     var receptionist = RequireLogin(master, "receptionista", UserRole.Receptionist, "tenant-a");
     var manager = RequireLogin(master, "managera", UserRole.Manager, "tenant-a");
@@ -54,6 +55,7 @@ try
         "Tenant B cannot branch on Promotional");
     master.SaveBranch(superAdmin, null, "tenant-c", "NORTH", "North Branch", true);
     var tenantCNorth = master.GetBranches("tenant-c").Single(x => x.Code == "NORTH");
+    cleanupNames.Add(tenantCNorth.DatabasePath);
     Assert(tenantCNorth.DatabasePath == $"{paths.TenantDatabaseName("tenant-c")}_NORTH",
         "Tenant C Full Clinic branch uses a readable isolated database name");
     var promoPlan = master.GetSubscriptionPlans().Single(x => x.Code == "PROMO");
@@ -197,16 +199,17 @@ try
 
     var secondMaster = new MasterDatabase(secondPaths);
     secondMaster.Initialize();
-    Assert(DatabaseExists(secondPaths, secondPaths.MasterDatabaseName), "second server profile has its own master database");
-    Assert(!string.Equals(firstServer, secondServer, StringComparison.OrdinalIgnoreCase) ||
-        paths.MasterDatabaseName != secondPaths.MasterDatabaseName, "test server database locations are distinct");
-    Assert(secondMaster.GetStaff("tenant-a").All(x => x.Username != vetUsername), "users are isolated between server profiles");
+    alternateCleanupNames.UnionWith([secondPaths.MasterDatabaseName, secondPaths.TenantDatabaseName("tenant-a"), secondPaths.TenantDatabaseName("tenant-b"), secondPaths.TenantDatabaseName("tenant-c")]);
+    Assert(DatabaseExists(secondPaths, secondPaths.MasterDatabaseName), "alternate database prefix has its own master database");
+    Assert(paths.MasterDatabaseName != secondPaths.MasterDatabaseName, "test deployment database locations are distinct");
+    Assert(secondMaster.GetStaff("tenant-a").All(x => x.Username != vetUsername), "users are isolated between independent database sets");
     var secondTenant = secondMaster.GetTenant("tenant-a");
-    Assert(DatabaseExists(secondPaths, secondTenant.DatabasePath), "second server profile has its own tenant database");
+    Assert(DatabaseExists(secondPaths, secondTenant.DatabasePath), "alternate database prefix has its own tenant database");
 
     var newCode = $"TEST-{suffix.ToUpperInvariant()}";
     master.SaveTenant(superAdmin, null, newCode, "Test Organization", true);
     var newTenant = master.GetTenants().Single(x => x.Code == newCode);
+    cleanupNames.Add(newTenant.DatabasePath);
     Assert(DatabaseExists(paths, newTenant.DatabasePath), "new organization gets an isolated database");
     var newTenantStore = new ClinicDataStore(newTenant.DatabasePath, newTenant.Id, paths: paths);
     newTenantStore.Load();
@@ -239,6 +242,7 @@ try
 
     master.SaveBranch(adminA, null, "tenant-a", "SOUTH", "South Branch", true);
     var south = master.GetBranches("tenant-a").Single(x => x.Code == "SOUTH");
+    cleanupNames.Add(south.DatabasePath);
     var southStore = new ClinicDataStore(south.DatabasePath, "tenant-a", paths: paths, branchId: south.Id);
     southStore.Load();
     Assert(southStore.Data.Clients.Count == 0, "new branch has its own empty operational database");
@@ -254,37 +258,23 @@ try
 finally
 {
     SqlConnection.ClearAllPools();
-    DropTestDatabases(secondPaths);
-    DropTestDatabases(paths);
+    DropTestDatabases(secondPaths, alternateCleanupNames);
+    DropTestDatabases(paths, cleanupNames);
     if (Directory.Exists(testRoot)) Directory.Delete(testRoot, true);
 }
 
 static bool DatabaseExists(DatabasePaths paths, string databaseName)
 {
-    using var connection = new SqlConnection(paths.ServerConnectionString);
+    using var connection = new SqlConnection(paths.DatabaseConnectionString(databaseName));
     connection.Open();
     using var command = connection.CreateCommand();
-    command.CommandText = "SELECT COUNT(*) FROM sys.databases WHERE name=@name;";
-    command.Parameters.AddWithValue("@name", databaseName);
-    return Convert.ToInt32(command.ExecuteScalar()) == 1;
+    command.CommandText = "SELECT DB_NAME();";
+    return string.Equals(Convert.ToString(command.ExecuteScalar()), databaseName, StringComparison.OrdinalIgnoreCase);
 }
 
-static IReadOnlyList<string> AllDatabaseNames(DatabasePaths paths)
+static void DropTestDatabases(DatabasePaths paths, IEnumerable<string> databaseNames)
 {
-    using var connection = new SqlConnection(paths.ServerConnectionString);
-    connection.Open();
-    using var command = connection.CreateCommand();
-    command.CommandText = "SELECT name FROM sys.databases WHERE name LIKE @prefix ORDER BY name;";
-    command.Parameters.AddWithValue("@prefix", paths.DatabasePrefix + "%");
-    using var reader = command.ExecuteReader();
-    var names = new List<string>();
-    while (reader.Read()) names.Add(reader.GetString(0));
-    return names;
-}
-
-static void DropTestDatabases(DatabasePaths paths)
-{
-    var names = AllDatabaseNames(paths).Where(x => x != paths.MasterDatabaseName).Append(paths.MasterDatabaseName).ToArray();
+    var names = databaseNames.Where(x => x != paths.MasterDatabaseName).Append(paths.MasterDatabaseName).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
     using var connection = new SqlConnection(paths.ServerConnectionString);
     connection.Open();
     foreach (var name in names)

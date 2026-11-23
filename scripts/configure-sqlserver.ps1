@@ -57,7 +57,6 @@ if (Test-Path -LiteralPath $appSettingsPath) {
     }
 }
 if (-not $profileReplaced) {
-    if (-not $TenantId) { throw "TenantId is required for a new server profile." }
     $newProfile = @{ Name = $ProfileName; Instance = $ServerInstance; DatabasePrefix = $DatabasePrefix; TenantId = $TenantId }
     if ($MirrorDirectory) { $newProfile.MirrorDirectory = $MirrorDirectory }
     $profiles += $newProfile
@@ -84,8 +83,13 @@ if ($MirrorDirectory) { $env:PAWCARE_MIRROR_DIRECTORY = $MirrorDirectory }
 & dotnet run --project $projectPath
 if ($LASTEXITCODE -ne 0) { throw "PawCare database initialization failed." }
 
-$tenantSuffix = @{ 'tenant-a'='TenantA'; 'tenant-b'='TenantB'; 'tenant-c'='TenantC' }[$configuredProfile.TenantId]
-$databaseQuery = "SET NOCOUNT ON; SELECT name FROM sys.databases WHERE name IN (N'${DatabasePrefix}Master',N'${DatabasePrefix}${tenantSuffix}') ORDER BY name;"
+$tenantSuffixes = if ($configuredProfile.TenantId) {
+    @(@{ 'tenant-a'='TenantA'; 'tenant-b'='TenantB'; 'tenant-c'='TenantC' }[$configuredProfile.TenantId])
+} else {
+    @('TenantA','TenantB','TenantC')
+}
+$expectedNames = @("N'${DatabasePrefix}Master'") + @($tenantSuffixes | ForEach-Object { "N'${DatabasePrefix}$_'" })
+$databaseQuery = "SET NOCOUNT ON; SELECT name FROM sys.databases WHERE name IN ($($expectedNames -join ',')) ORDER BY name;"
 & sqlcmd -S $ServerInstance -E -C -b -l 10 -t 30 -Q $databaseQuery
 if ($LASTEXITCODE -ne 0) { throw "Could not verify the PawCare databases on $ServerInstance." }
 $defaultProfile = $profiles[0]
@@ -93,6 +97,7 @@ $settings = @{
     Database = @{
         Server = $defaultProfile.Instance
         DatabasePrefix = $defaultProfile.DatabasePrefix
+        DirectoryDatabase = "MasterCRMJ"
         TrustServerCertificate = $true
         Servers = $profiles
     }

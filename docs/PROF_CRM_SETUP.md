@@ -1,6 +1,6 @@
 # PawCare CRM API setup
 
-The professor's Company and CompanyDatabase pattern is implemented in the PawCare API. `MasterCRMJ` is the EF Core directory for companies, registered devices, and each company's active tenant database. The desktop app also maintains its own `PawCareMaster` per server for PawCare user accounts, roles, subscriptions, and branches.
+The professor's Company and CompanyDatabase pattern is implemented in the PawCare API. `MasterCRMJ` is the EF Core directory for companies, registered devices, and each company's active tenant database. The desktop app uses one shared `PawCareMaster` for PawCare user accounts, roles, subscriptions, and branches.
 
 `MasterCRMJ` normalizes the earlier `MAsterCRMJ` capitalization typo only. The professor-required `Company`, `CompanyDatabase`, `Device`, `MasterErpDbContext`, and tenant entity patterns remain unchanged, so the naming cleanup does not replace the required design.
 
@@ -17,7 +17,7 @@ The EF tenant tables are `Customers`, `Products`, `Suppliers`, and `Inventories`
 
 ## Local configuration
 
-The API uses Windows authentication. The central `MasterCRMJ` directory is on `.\SQLEXPRESS`; active registrations route Tenant A to `PawCareTenantA` on Server 1, Tenant B to `PawCareTenantB` on Server 2, and Tenant C to `PawCareTenantC` on Server 3. The `LocalWindows` credential key selects integrated security; no SQL password is stored in the repository.
+The API uses Windows authentication. The central `MasterCRMJ` directory and the tenant databases are on `.\SQLEXPRESS`; active registrations route Tenant A, B, and C to their separate `PawCareTenantA`, `PawCareTenantB`, and `PawCareTenantC` databases. The `LocalWindows` credential key selects integrated security; no SQL password is stored in the repository.
 
 From the repository root:
 

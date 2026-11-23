@@ -97,19 +97,18 @@ foreach (var tenant in master.GetTenants())
     }
 }
 
-using var connection = new SqlConnection(paths.ServerConnectionString);
-connection.Open();
 var expectedDatabases = new List<string> { paths.MasterDatabaseName };
 expectedDatabases.AddRange(new[] { "tenant-a", "tenant-b", "tenant-c" }
     .Where(paths.ManagesTenant)
     .Select(paths.TenantDatabaseName));
 foreach (var name in expectedDatabases)
 {
-    using var command = connection.CreateCommand();
+    using var verificationConnection = new SqlConnection(paths.DatabaseConnectionString(name));
+    verificationConnection.Open();
+    using var command = verificationConnection.CreateCommand();
     command.CommandTimeout = 120;
-    command.CommandText = "SELECT state_desc FROM sys.databases WHERE name=@name;";
-    command.Parameters.AddWithValue("@name", name);
-    if (!string.Equals(Convert.ToString(command.ExecuteScalar()), "ONLINE", StringComparison.OrdinalIgnoreCase))
+    command.CommandText = "SELECT DB_NAME();";
+    if (!string.Equals(Convert.ToString(command.ExecuteScalar()), name, StringComparison.OrdinalIgnoreCase))
         throw new InvalidOperationException($"Database {name} was not created or is offline.");
     Console.WriteLine($"  ONLINE: {name}");
 }

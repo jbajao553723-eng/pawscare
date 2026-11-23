@@ -5,7 +5,7 @@
 ```mermaid
 flowchart LR
     Login[Username + password] --> Directory[(MasterCRMJ LoginRoutes)]
-    Directory -->|server + tenant| Master[(Resolved PawCareMaster)]
+    Directory -->|tenant route| Master[(PawCareMaster)]
     Master -->|company + role + subscription + branch| A[(Branch database)]
 
     A --> OA[Local clinic operations]
@@ -14,29 +14,30 @@ flowchart LR
     A -->|local SQL .bak then atomic copy| Cloud
 ```
 
-Each configured SQL Server instance has an independent master and tenant/branch database set. The selected branch database is authoritative for clinic operations. Subscription settings in that instance's master database determine which modules are available. Cloud availability is not part of the operational request path.
+One `.\SQLEXPRESS` instance hosts the directory, shared application master, and physically separate tenant/branch databases. The selected branch database is authoritative for clinic operations. Subscription settings in `PawCareMaster` determine which modules are available. Cloud availability is not part of the operational request path.
 
 ## Sign-in sequence
 
 1. The user enters a globally unique username and password; no server selector is shown.
-2. The central `MasterCRMJ` directory resolves the username to an active company database registration, SQL Server, and tenant.
-3. The resolved server's `PawCareMaster` verifies a PBKDF2-SHA-512 password hash using constant-time comparison and confirms that the account's tenant matches the central route.
-4. That server's master database returns the role, organization, subscription, and user identity.
+2. The central `MasterCRMJ` directory resolves the username to an active company and tenant registration.
+3. `PawCareMaster` verifies a PBKDF2-SHA-512 password hash using constant-time comparison and confirms that the account's tenant matches the central route.
+4. The shared application master returns the role, organization, subscription, and user identity.
 5. If the company has multiple active branches, the user selects a branch. The app connects to that branch's operational database. Super Admin selects a company and branch for sync/backup work.
 6. The sidebar and save operations require both role permission and subscription entitlement. A plan change does not delete existing records.
 
-## Initial database layout per server
+## Database layout on `.\SQLEXPRESS`
 
 | SQL Server database | Responsibility | Scope |
 |---|---|---|
-| `PawCareMaster` | Organizations, branches, subscriptions, users, hashes, roles, master audit | Identity and authorization on that server |
+| `MasterCRMJ` | Central username and company routing directory | All tenants |
+| `PawCareMaster` | Organizations, branches, subscriptions, users, hashes, roles, master audit | Shared identity and authorization |
 | `PawCareTenantA` | PawCare Makati data | Tenant A only |
 | `PawCareTenantB` | PawCare Taguig data | Tenant B only |
 | `PawCareTenantC` | PawCare Quezon City data | Tenant C only |
 
 Each tenant database has separate `Inquiries`, `Complaints`, and `Feedback` tables plus operational entity, audit, outbox, metadata, and lease tables.
 
-The database names follow their responsibilities: `MasterCRMJ` is the one central company/routing directory, each SQL profile has one `PawCareMaster` identity and authorization database, and `PawCareTenant*` databases contain isolated branch operations. This keeps the professor's master/tenant pattern while making the deployment scope explicit.
+The database names follow their responsibilities: `MasterCRMJ` is the central company/routing directory, `PawCareMaster` is the shared identity and authorization database, and each `PawCareTenant*` database contains only that tenant's operational records. This follows the professor's master/tenant pattern without mixing tenant data.
 
 Archived appointments remain in the tenant's `Appointments` table with `IsDeleted=1`; they are not copied into a second archive table. Restoring one reactivates the same ID, increments its version, appends a `Restore` audit/outbox event, and returns it to the active schedule. ID generation includes archived rows so a new record cannot reuse an archived appointment's key.
 
