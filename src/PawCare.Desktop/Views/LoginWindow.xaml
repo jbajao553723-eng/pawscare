@@ -1,0 +1,230 @@
+<Window x:Class="PawCare.Desktop.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PawCare - Sign in"
+        Width="1140" Height="720" MinWidth="980" MinHeight="640"
+        Icon="/PawCare.Desktop;component/Assets/PawCareIcon.ico"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip"
+        Background="White">
+    <Window.Resources>
+        <Style x:Key="LoginTextBox" TargetType="TextBox" BasedOn="{StaticResource FieldTextBox}">
+            <Setter Property="MinHeight" Value="48" />
+            <Setter Property="Padding" Value="14,12" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Background" Value="#FBFCFA" />
+            <Setter Property="BorderBrush" Value="#D7DFDA" />
+            <Style.Triggers>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="BorderBrush" Value="{StaticResource GoldBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="LoginPasswordBox" TargetType="PasswordBox">
+            <Setter Property="MinHeight" Value="48" />
+            <Setter Property="Padding" Value="14,12" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="#FBFCFA" />
+            <Setter Property="BorderBrush" Value="#D7DFDA" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FocusVisualStyle" Value="{StaticResource PawFocusVisual}" />
+            <Style.Triggers>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="BorderBrush" Value="{StaticResource GoldBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.9*" />
+            <ColumnDefinition Width="1.1*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Background="{StaticResource ForestBrush}" ClipToBounds="True">
+            <Ellipse Width="450" Height="450" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                     Margin="0,0,-255,-255" Stroke="#18FFFFFF" StrokeThickness="1" />
+            <Ellipse Width="250" Height="250" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                     Margin="0,0,-125,-125" Stroke="#28D4B87A" StrokeThickness="1" />
+
+            <Grid Margin="54,48,50,42">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border Width="148" Height="110" HorizontalAlignment="Left"
+                        Background="White" CornerRadius="15" Padding="9">
+                    <Image Source="/PawCare.Desktop;component/Assets/PawCareBrand.png"
+                           Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" />
+                </Border>
+
+                <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left" MaxWidth="395">
+                    <TextBlock Text="Welcome back to"
+                               Foreground="White"
+                               FontFamily="{StaticResource DisplayFont}"
+                               FontSize="40"
+                               FontWeight="SemiBold"
+                               TextWrapping="Wrap" />
+                    <TextBlock Text="better pet care."
+                               Foreground="{StaticResource GoldBrush}"
+                               FontFamily="{StaticResource DisplayFont}"
+                               FontSize="42"
+                               FontWeight="Bold"
+                               Margin="0,-3,0,0"
+                               TextWrapping="Wrap" />
+                    <TextBlock Text="Keep appointments, patient histories, treatments, and client follow-ups connected in one calm clinic workspace."
+                               Foreground="#D7E0DB"
+                               FontSize="14"
+                               LineHeight="23"
+                               TextWrapping="Wrap"
+                               Margin="0,22,0,0" />
+
+                    <StackPanel Margin="0,25,0,0">
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="20" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <Ellipse Width="7" Height="7" Fill="{StaticResource GoldBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="Patient and treatment records stay connected"
+                                       Foreground="White" FontSize="12" FontWeight="SemiBold" />
+                        </Grid>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="20" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <Ellipse Width="7" Height="7" Fill="{StaticResource GoldBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="Appointments and follow-ups stay visible"
+                                       Foreground="White" FontSize="12" FontWeight="SemiBold" />
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="20" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <Ellipse Width="7" Height="7" Fill="{StaticResource GoldBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="Every clinic role opens the right workspace"
+                                       Foreground="White" FontSize="12" FontWeight="SemiBold" />
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock Grid.Row="2" Text="Care teams connected by PawCare"
+                           Foreground="#AFC0B7" FontSize="10.5" />
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Column="1" Background="#F4F6F2">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid MinHeight="680">
+                    <Border Width="500" Margin="46,32" Padding="34,30"
+                            VerticalAlignment="Center" Background="White" CornerRadius="20">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#23342C" BlurRadius="28" ShadowDepth="8" Opacity="0.12" />
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Sign in to your clinic"
+                                       Foreground="{StaticResource ForestDarkBrush}"
+                                       FontFamily="{StaticResource DisplayFont}"
+                                       FontSize="34"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="Enter your PawCare account. Your username opens the correct branch and role automatically."
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="13"
+                                       LineHeight="20"
+                                       TextWrapping="Wrap"
+                                       Margin="0,8,0,26" />
+
+                            <TextBlock Text="Username"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource InkBrush}"
+                                       Margin="0,0,0,7" />
+                            <TextBox x:Name="UsernameTextBox"
+                                     Style="{StaticResource LoginTextBox}"
+                                     Text="receptionista"
+                                     Margin="0,0,0,18"
+                                     AutomationProperties.Name="Username" />
+
+                            <TextBlock Text="Password"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource InkBrush}"
+                                       Margin="0,0,0,7" />
+                            <PasswordBox x:Name="PasswordInput"
+                                         Style="{StaticResource LoginPasswordBox}"
+                                         Password="pawcare123"
+                                         Margin="0,0,0,6"
+                                         AutomationProperties.Name="Password" />
+                            <TextBlock x:Name="ErrorText"
+                                       Foreground="{StaticResource DangerBrush}"
+                                       FontSize="11"
+                                       MinHeight="25"
+                                       TextWrapping="Wrap" />
+
+                            <Button Content="Continue to PawCare"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Height="50"
+                                    FontSize="13"
+                                    Click="SignInButton_Click"
+                                    IsDefault="True" />
+
+                            <Border Background="#F5F7F3"
+                                    CornerRadius="14"
+                                    Padding="16,15"
+                                    Margin="0,22,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="78" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel Grid.ColumnSpan="2" Margin="0,0,0,12">
+                                        <TextBlock Text="Demo clinic accounts"
+                                                   Foreground="{StaticResource ForestDarkBrush}"
+                                                   FontSize="11" FontWeight="SemiBold" />
+                                        <TextBlock Text="All accounts use password pawcare123"
+                                                   Foreground="{StaticResource MutedBrush}" FontSize="9.5" Margin="0,3,0,0" />
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Row="1" Text="Branch A"
+                                               Foreground="{StaticResource ForestBrush}" FontSize="10" FontWeight="SemiBold" />
+                                    <TextBlock Grid.Row="1" Grid.Column="1"
+                                               Text="receptionista / managera / veterinariana / admina"
+                                               Foreground="{StaticResource MutedBrush}" FontSize="10" TextWrapping="Wrap" />
+
+                                    <TextBlock Grid.Row="2" Text="Branch B" Foreground="{StaticResource ForestBrush}"
+                                               FontSize="10" FontWeight="SemiBold" Margin="0,7,0,0" />
+                                    <TextBlock Grid.Row="2" Grid.Column="1"
+                                               Text="receptionistb / managerb / veterinarianb / adminb"
+                                               Foreground="{StaticResource MutedBrush}" FontSize="10" Margin="0,7,0,0" TextWrapping="Wrap" />
+
+                                    <TextBlock Grid.Row="3" Text="Branch C" Foreground="{StaticResource ForestBrush}"
+                                               FontSize="10" FontWeight="SemiBold" Margin="0,7,0,0" />
+                                    <TextBlock Grid.Row="3" Grid.Column="1"
+                                               Text="receptionistc / managerc / veterinarianc / adminc"
+                                               Foreground="{StaticResource MutedBrush}" FontSize="10" Margin="0,7,0,0" TextWrapping="Wrap" />
+
+                                    <TextBlock Grid.Row="4" Text="Super Admin" Foreground="{StaticResource ForestBrush}"
+                                               FontSize="10" FontWeight="SemiBold" Margin="0,7,0,0" />
+                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="superadmin"
+                                               Foreground="{StaticResource MutedBrush}" FontSize="10" Margin="0,7,0,0" />
+
+                                    <TextBlock Grid.Row="5" Grid.ColumnSpan="2"
+                                               Text="Enter a username above to open its assigned clinic workspace."
+                                               Foreground="{StaticResource MutedBrush}" FontSize="9.5" Margin="0,12,0,0" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

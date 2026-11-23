@@ -1,0 +1,100 @@
+@host = http://localhost:5147
+@newCompanyId = 0
+@newTenantDatabase = CHANGE_ME
+
+### API status and registered clinics
+GET {{host}}/health
+
+###
+GET {{host}}/api/branches
+
+### Master database examples (Development only)
+POST {{host}}/companies
+Content-Type: application/json
+
+{
+  "companyCode": "PAW-DEMO",
+  "companyName": "PawCare Demo Clinic",
+  "isActive": true
+}
+
+###
+POST {{host}}/devices
+Content-Type: application/json
+
+{
+  "companyId": 1,
+  "deviceCode": "FRONTDESK-01",
+  "deviceName": "Makati Front Desk",
+  "isActive": true
+}
+
+### Set newCompanyId and newTenantDatabase to a newly created company and migrated database.
+POST {{host}}/company-databases
+Content-Type: application/json
+
+{
+  "companyId": {{newCompanyId}},
+  "serverName": ".\\SQLEXPRESS",
+  "databaseName": "{{newTenantDatabase}}",
+  "credentialKey": "LocalWindows",
+  "isActive": true
+}
+
+### Existing local registrations: company 1 = Tenant A, 2 = Tenant B, 3 = Tenant C
+GET {{host}}/test-tenant/1
+
+###
+GET {{host}}/tenant/1/products
+
+###
+POST {{host}}/tenant/1/products
+Content-Type: application/json
+
+{
+  "productCode": "VAC-DEMO",
+  "productName": "Demo Vaccine",
+  "unitPrice": 350.00,
+  "isActive": true
+}
+
+###
+POST {{host}}/tenant/1/inventories
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantityOnHand": 25.00,
+  "reorderLevel": 10.00
+}
+
+###
+GET {{host}}/tenant/1/customers
+
+###
+POST {{host}}/tenant/1/customers
+Content-Type: application/json
+
+{
+  "customerCode": "CLIENT-DEMO",
+  "customerName": "Demo Pet Owner",
+  "contactNumber": "09171234567",
+  "emailAddress": "demo@example.com",
+  "isActive": true
+}
+
+###
+GET {{host}}/tenant/1/suppliers
+
+###
+POST {{host}}/tenant/1/suppliers
+Content-Type: application/json
+
+{
+  "supplierCode": "SUP-DEMO",
+  "supplierName": "Demo Veterinary Supply",
+  "isActive": true
+}
+
+###
+GET {{host}}/tenant/1/inventories

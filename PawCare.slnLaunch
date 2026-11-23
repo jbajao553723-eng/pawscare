@@ -1,0 +1,19 @@
+[
+  {
+    "Name": "PawCare (clinic and lab)",
+    "Projects": [
+      {
+        "Path": "src\\PawCare.Api\\PawCare.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\PawCare.Desktop\\PawCare.Desktop.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\PawCare.WinForms\\PawCare.WinForms.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

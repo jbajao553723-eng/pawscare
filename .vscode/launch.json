@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "PawCare Desktop (WPF)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build PawCare Desktop",
+      "program": "${workspaceFolder}/src/PawCare.Desktop/bin/Debug/net10.0-windows/PawCare.Desktop.dll",
+      "cwd": "${workspaceFolder}/src/PawCare.Desktop",
+      "console": "internalConsole",
+      "stopAtEntry": false
+    }
+  ]
+}

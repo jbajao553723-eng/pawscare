@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);NU1510</NoWarn>
+    <AssemblyName>PawCare.Desktop</AssemblyName>
+    <RootNamespace>PawCare.Desktop</RootNamespace>
+    <ApplicationIcon>Assets\PawCareIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\PawCareBrand.png" />
+    <Resource Include="Assets\PawCareBrand.svg" />
+    <Resource Include="Assets\PawCareIcon.png" />
+    <Resource Include="Assets\PawCareIcon.svg" />
+    <Resource Include="Assets\PawCareIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

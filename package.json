@@ -1,9 +1,0 @@
-{
-  "name": "pawcare-crm",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Role-based veterinary CRM for receptionist and manager workflows",
-  "scripts": {
-    "check": "node --check dist/app.js && node scripts/check.mjs"
-  }
-}

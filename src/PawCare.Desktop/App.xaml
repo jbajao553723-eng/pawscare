@@ -1,0 +1,180 @@
+<Application x:Class="PawCare.Desktop.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Application.Resources>
+        <Color x:Key="ForestColor">#31423B</Color>
+        <Color x:Key="ForestDarkColor">#1C2C24</Color>
+        <Color x:Key="SageColor">#7F8B6C</Color>
+        <Color x:Key="SageSoftColor">#E7EBE2</Color>
+        <Color x:Key="SagePaleColor">#F2F3F0</Color>
+        <Color x:Key="GoldColor">#D4B87A</Color>
+        <Color x:Key="GoldSoftColor">#F2EAD7</Color>
+        <Color x:Key="CreamColor">#FAFAF8</Color>
+        <Color x:Key="InkColor">#29302D</Color>
+        <Color x:Key="MutedColor">#6C776F</Color>
+        <Color x:Key="LineColor">#DFE6E2</Color>
+        <Color x:Key="DangerColor">#A9534D</Color>
+        <Color x:Key="WarningColor">#A66D20</Color>
+
+        <SolidColorBrush x:Key="ForestBrush" Color="{StaticResource ForestColor}" />
+        <SolidColorBrush x:Key="ForestDarkBrush" Color="{StaticResource ForestDarkColor}" />
+        <SolidColorBrush x:Key="SageBrush" Color="{StaticResource SageColor}" />
+        <SolidColorBrush x:Key="SageSoftBrush" Color="{StaticResource SageSoftColor}" />
+        <SolidColorBrush x:Key="SagePaleBrush" Color="{StaticResource SagePaleColor}" />
+        <SolidColorBrush x:Key="GoldBrush" Color="{StaticResource GoldColor}" />
+        <SolidColorBrush x:Key="GoldSoftBrush" Color="{StaticResource GoldSoftColor}" />
+        <SolidColorBrush x:Key="CreamBrush" Color="{StaticResource CreamColor}" />
+        <SolidColorBrush x:Key="InkBrush" Color="{StaticResource InkColor}" />
+        <SolidColorBrush x:Key="MutedBrush" Color="{StaticResource MutedColor}" />
+        <SolidColorBrush x:Key="LineBrush" Color="{StaticResource LineColor}" />
+        <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+        <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+        <SolidColorBrush x:Key="ContentSurfaceBrush" Color="#F6F7F4" />
+        <SolidColorBrush x:Key="SelectedSurfaceBrush" Color="#33D4B87A" />
+
+        <FontFamily x:Key="UiFont">Segoe UI Variable Text, Segoe UI</FontFamily>
+        <FontFamily x:Key="DisplayFont">Segoe UI Variable Display, Segoe UI</FontFamily>
+
+        <Style x:Key="PawFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border BorderBrush="{StaticResource GoldBrush}" BorderThickness="2" CornerRadius="10" Margin="-3" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Window">
+            <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+            <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+            <Setter Property="Background" Value="{StaticResource CreamBrush}" />
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource ForestDarkBrush}" />
+            <Setter Property="Background" Value="{StaticResource GoldBrush}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="17,10" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{StaticResource PawFocusVisual}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#C9A354" /></Trigger>
+                <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.5" /></Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Foreground" Value="{StaticResource ForestBrush}" />
+            <Setter Property="Background" Value="{StaticResource SageSoftBrush}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#DDE3D6" /></Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="OutlineButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="9" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{StaticResource SagePaleBrush}" /></Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FieldTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FocusVisualStyle" Value="{StaticResource PawFocusVisual}" />
+        </Style>
+
+        <Style x:Key="FieldComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="FocusVisualStyle" Value="{StaticResource PawFocusVisual}" />
+        </Style>
+
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="GridLinesVisibility" Value="Horizontal" />
+            <Setter Property="HorizontalGridLinesBrush" Value="#EDF0ED" />
+            <Setter Property="VerticalGridLinesBrush" Value="Transparent" />
+            <Setter Property="RowHeaderWidth" Value="0" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="AutoGenerateColumns" Value="False" />
+            <Setter Property="CanUserAddRows" Value="False" />
+            <Setter Property="CanUserDeleteRows" Value="False" />
+            <Setter Property="CanUserResizeRows" Value="False" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="SelectionUnit" Value="FullRow" />
+            <Setter Property="RowHeight" Value="48" />
+            <Setter Property="AlternatingRowBackground" Value="#FBFCFA" />
+            <Setter Property="AlternationCount" Value="2" />
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F7F8F6" />
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Padding" Value="12,11" />
+            <Setter Property="BorderBrush" Value="#EDF0ED" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+            <Setter Property="FocusVisualStyle" Value="{StaticResource PawFocusVisual}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource SagePaleBrush}" />
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource SageSoftBrush}" />
+                    <Setter Property="Foreground" Value="{StaticResource ForestDarkBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Application.Resources>
+</Application>

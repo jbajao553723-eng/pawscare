@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="src/PawCare.Desktop/PawCare.Desktop.csproj" />
+  <Project Path="src/PawCare.DatabaseSetup/PawCare.DatabaseSetup.csproj" />
+  <Project Path="tests/PawCare.SmokeTests/PawCare.SmokeTests.csproj" />
+  <Project Path="src/PawCare.WinForms/PawCare.WinForms.csproj" />
+  <Project Path="src/PawCare.Api/PawCare.Api.csproj" />
+  <Project Path="src/PawCare.Domain/PawCare.Domain.csproj" />
+  <Project Path="src/PawCare.Infrastructure/PawCare.Infrastructure.csproj" />
+</Solution>
